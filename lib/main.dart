@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
+
+class BMI{
+  double weight;
+  double height;
+  BMI(){
+    weight = 40;
+    height = 150;
+  }
+  
+  void setWeight(var a){
+    weight = a;
+  }
+  
+  void setHeight(var a){
+    height = a;
+  }
+}
+
+BMI obj = new BMI();
 
 class MyApp extends StatelessWidget {
   @override
@@ -11,6 +31,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue
       ),
       home: MyHomePage(),
+      routes: <String, WidgetBuilder>{
+        '/weight' : (BuildContext context) => Page1(),
+        '/height' : (BuildContext context) => heightPage()
+      }
     );
   }
 }
@@ -61,8 +85,7 @@ class _MyHomepageState extends State<MyHomePage> {
                 onWillAccept: (data) { return true;},
                 onAccept: (data){
                     if(data == 1) {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => LaunchedPage()));
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => Page1()));
                     }
                 },
               ),
@@ -88,20 +111,6 @@ class _MyHomepageState extends State<MyHomePage> {
   }
 }
 
-class LaunchedPage extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: Page1()
-    );
-  }
-}
-
-
 class Page1 extends StatefulWidget{
   @override
   _Page1State createState() => _Page1State();
@@ -109,7 +118,7 @@ class Page1 extends StatefulWidget{
 }
 
 class _Page1State extends State <Page1>{
-  var weight = 40.0;
+  var weight = obj.weight;
   @override
   Widget build(BuildContext context) {
 
@@ -125,7 +134,7 @@ class _Page1State extends State <Page1>{
             Padding(
               padding: const EdgeInsets.only(bottom: 50.0),
               child: Center(
-                child: Text(weight.toString(), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 48, fontFamily: 'Open Sans', color: Colors.white),),
+                child: Text(obj.weight.toString(), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 48, fontFamily: 'Open Sans', color: Colors.white),),
               ),
             ),
             Padding(
@@ -149,7 +158,7 @@ class _Page1State extends State <Page1>{
                         child: Container(
                           width: 300,
                           child: new Slider(
-                              value: weight,
+                              value: obj.weight,
                               min: 30,
                               max: 150,
                               divisions: 120,
@@ -157,7 +166,8 @@ class _Page1State extends State <Page1>{
                               inactiveColor: Colors.white.withOpacity(0.2),
                               onChanged: (_value) {
                                 setState(() {
-                                  weight = _value;
+                                  this.weight = _value;
+                                  obj.setWeight(_value);
                                 });
                               },
 
@@ -184,8 +194,7 @@ class _Page1State extends State <Page1>{
                     ),
 //                    color: Colors.white.withOpacity(0.2),
                     child: new IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,), onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MyHomePage()));
+                      Navigator.pop(context);
                     }),
                   ),
                 ),
@@ -208,7 +217,7 @@ class _Page1State extends State <Page1>{
                       ),
 
                       onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HeightPage()));
+                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => heightPage()));
                         },
                       ),
 //                      new Container(
@@ -237,19 +246,6 @@ class _Page1State extends State <Page1>{
 
 }
 
-class HeightPage extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
-      home: heightPage(),
-    );
-  }
-}
-
 // ignore: camel_case_types
 class heightPage extends StatefulWidget{
   @override
@@ -258,12 +254,118 @@ class heightPage extends StatefulWidget{
 }
 
 class _HeightPage extends State <heightPage>{
+  var height = obj.height;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.pinkAccent,
-      ),
+      backgroundColor: Colors.redAccent,
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            new Expanded(child: Container()),
+            Center(
+              child: Text("HEIGHT (cm)", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, fontFamily: 'Open Sans', color: Colors.white),),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50.0),
+              child: Center(
+                child: Text(obj.height.toString(), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 48, fontFamily: 'Open Sans', color: Colors.white),),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: new Container(
+                width: double.infinity,
+                height: 60,
+                color: Colors.transparent,
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(child: Container()),
+                    SliderTheme(
+                      data: SliderThemeData(
+                          trackHeight: 20,
+                          inactiveTrackColor: Colors.white,
+                          thumbColor: Colors.white.withOpacity(1.0),
+                          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 15.0, disabledThumbRadius: 20.0)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                        child: Container(
+                          width: 300,
+                          child: new Slider(
+                            value: obj.height,
+                            min: 120,
+                            max: 240,
+                            divisions: 120,
+                            activeColor: Colors.white.withOpacity(0.8),
+                            inactiveColor: Colors.white.withOpacity(0.2),
+                            onChanged: (_value) {
+                              setState(() {
+                                this.height = _value;
+                                obj.setHeight(_value);
+                              });
+                            },
+
+                          ),
+                        ),
+                      ),
+                    ),
+                    new Expanded(child: Container())
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0, left: 40.0),
+                  child: new Container(
+                    width: 90,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1),
+                      borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+//                    color: Colors.white.withOpacity(0.2),
+                    child: new IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,), onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                  ),
+                ),
+                new Expanded(child: Container()),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0, right: 0.0),
+                  child: ButtonBar(
+                    children: <Widget>[
+                      FlatButton(
+                        child: new Container(
+                            width: 180,
+                            height: 55,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(40.0))
+                            ),
+                            child: new Center(
+                              child: Text("Calculate", style: TextStyle(fontSize: 20, color: Colors.redAccent, fontFamily: 'Roboto', fontWeight: FontWeight.bold), ),
+                            )
+                        ),
+
+                        onPressed: () {
+
+                        },
+                      ),
+
+                    ],
+                  ),
+                ),
+
+              ],
+            )
+          ],
+        ),
+      )
     );
   }
 
